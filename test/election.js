@@ -11,7 +11,7 @@ contract("Election", function (accouts) {
         });
     }) ;
 
-    it("it initializes the candidate with teh correct values", function() {
+    it("it initializes the candidate with the correct values", function() {
         return Election.deployed().then(function(instance) {
             electionInstance = instance;
             return electionInstance.candidates(1);

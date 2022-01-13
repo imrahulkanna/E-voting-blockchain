@@ -1,68 +1,111 @@
 App = {
-  web3Provider: null,
-  contracts: {},
+    web3Provider: null,
+    contracts: {},
+    account: '0x0',
 
-  init: async function() {
-    // Load pets.
-    $.getJSON('../pets.json', function(data) {
-      var petsRow = $('#petsRow');
-      var petTemplate = $('#petTemplate');
+    init:function () {
+        return App.initWeb3();
+    },
 
-      for (i = 0; i < data.length; i ++) {
-        petTemplate.find('.panel-title').text(data[i].name);
-        petTemplate.find('img').attr('src', data[i].picture);
-        petTemplate.find('.pet-breed').text(data[i].breed);
-        petTemplate.find('.pet-age').text(data[i].age);
-        petTemplate.find('.pet-location').text(data[i].location);
-        petTemplate.find('.btn-adopt').attr('data-id', data[i].id);
+    initWeb3:function () {
+        if(window.ethereum) {
+            // const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+            App.web3Provider = window.ethereum;
+        } else {
+            App.web3Provider = new Web3.providers.HttpProvider("http://localhost:8545/");
+        }
 
-        petsRow.append(petTemplate.html());
-      }
-    });
+        web3 = new Web3(App.web3Provider);
+        // if (typeof web3 != 'undefined') {
+        //     // when a web3 instance is provided by metamask
+        //     App.web3Provider = web3.currentProvider;
+        //     web3 = new Web3(web3.currentProvider)
+        // } else {
+        //     // specify default instance if no web3 instance provided
+        //     App.web3Provider = new Web3.providers.HttpProvider('http://localhost:8545/');
+        //     web3 = new Web3(App.web3Provider);
+        // }
 
-    return await App.initWeb3();
-  },
+        return App.initContract();
+    },
 
-  initWeb3: async function() {
-    /*
-     * Replace me...
-     */
+    initContract: function () {
+        $.getJSON("Election.json", function (election) {
+            App.contracts.Election = TruffleContract(election);
+            App.contracts.Election.setProvider(App.web3Provider);
+            return App.render();
+        });
 
-    return App.initContract();
-  },
+        //return App.bindEvents();
+    },
 
-  initContract: function() {
-    /*
-     * Replace me...
-     */
+    render: function() {
+        var electionInstance;
+        var loader = $("#loader");
+        var content = $("#content");
 
-    return App.bindEvents();
-  },
+        loader.show();
+        content.hide();
 
-  bindEvents: function() {
-    $(document).on('click', '.btn-adopt', App.handleAdopt);
-  },
+        //Load account data
+        web3.eth.getCoinbase(function(err, account) {
+            if (err === null) {
+                App.account = account;
+                $("#accountAddress").html("Your Account: " + account);
+            }
+        });
 
-  markAdopted: function() {
-    /*
-     * Replace me...
-     */
-  },
+        // Load contract data
+        App.contracts.Election.deployed().then(function(instance) {
+            electionInstance = instance;
+            return electionInstance.candidatesCount();
+        }).then(function(candidatesCount) {
+            var candidatesResults = $("#candidatesResults");
+            candidatesResults.empty();
 
-  handleAdopt: function(event) {
-    event.preventDefault();
+            for (var i=1; i<=candidatesCount; i++) {
+                electionInstance.candidates(i).then(function(candidate) {
+                    var id = candidate[0];
+                    var name = candidate[1];
+                    var voteCount = candidate[2];
 
-    var petId = parseInt($(event.target).data('id'));
+                    //Render candidate Result
+                    var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + voteCount + "</td></tr>"
+                    candidatesResults.append(candidateTemplate);
+                });
+            }
 
-    /*
-     * Replace me...
-     */
-  }
+            loader.hide();
+            content.show();
+        }).catch(function(error) {
+            console.warn(error);
+        });
+    },
+
+    // bindEvents: function () {
+    //     $(document).on('click', '.btn-adopt', App.handleAdopt);
+    // },
+
+    // markAdopted: function () {
+    //     /*
+    //      * Replace me...
+    //      */
+    // },
+
+    // handleAdopt: function (event) {
+    //     event.preventDefault();
+
+    //     var petId = parseInt($(event.target).data('id'));
+
+    //     /*
+    //      * Replace me...
+    //      */
+    // }
 
 };
 
-$(function() {
-  $(window).load(function() {
-    App.init();
-  });
+$(function () {
+    $(window).load(function () {
+        App.init();
+    });
 });

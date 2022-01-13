@@ -60,7 +60,7 @@
   "sourceMap": "61:1021:0:-;;;986:93;8:9:-1;5:2;;;30:1;27;20:12;5:2;986:93:0;1017:20;;;;;;;;;;;;;;;;;;:12;;;:20;;:::i;:::-;1048:23;;;;;;;;;;;;;;;;;;:12;;;:23;;:::i;:::-;61:1021;;707:252;859:15;;:17;;;;;;;;;;;;;917:34;;;;;;;;927:15;;917:34;;;;943:5;917:34;;;;949:1;917:34;;;887:10;:27;898:15;;887:27;;;;;;;;;;;:64;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;707:252;:::o;61:1021::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;",
   "deployedSourceMap": "61:1021:0:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;61:1021:0;;;;;;;;;;;;;;;;;;;;;;;;640:27;;;:::i;:::-;;;;;;;;;;;;;;;;;;;308:44;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;308:44:0;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;23:1:-1;8:100;33:3;30:1;27:10;8:100;;;99:1;94:3;90:11;84:18;80:1;75:3;71:11;64:39;52:2;49:1;45:10;40:15;;8:100;;;12:14;308:44:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;640:27;;;;:::o;308:44::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o",
   "source": "// SPDX-License-Identifier: MIT\r\npragma solidity >=0.5.0;\r\n\r\ncontract Election {\r\n    //model a candidate\r\n    struct Candidate {\r\n        uint cId;\r\n        string name;\r\n        uint voteCount;\r\n    } // creating a structure for candidate whic contains name, id and votecount\r\n\r\n    //store candidate\r\n    mapping(uint => Candidate) public candidates;  //mapping maps/associates a data type to another\r\n    // here we are mapping candidatesCount(uint) to Candidate(struct) [similar to dict in python(key-value pair)]\r\n\r\n    //store Candidate count(because we cant know the size of the mappping anfd we cant iterate over the mapping)\r\n    uint public candidatesCount;\r\n\r\n    // add candidate function\r\n    function addCandidate (string memory _name) private { //we are using private on this function because we dont want anyothers to add candidates\r\n        candidatesCount++;\r\n        candidates[candidatesCount] = Candidate(candidatesCount,_name,0);\r\n    }\r\n\r\n    //constructor\r\n    constructor() public{\r\n        addCandidate(\"GOKU\");\r\n        addCandidate(\"SAITAMA\");\r\n    }\r\n}",
-  "sourcePath": "C:\\Users\\User\\OneDrive\\Desktop\\E-voting-blockchain\\contracts\\Election.sol",
+  "sourcePath": "D:\\codes\\GITHUB\\E-voting-blockchain\\contracts\\Election.sol",
   "ast": {
     "absolutePath": "project:/contracts/Election.sol",
     "exportedSymbols": {
@@ -1326,10 +1326,47 @@
       "links": {},
       "address": "0x7E06cb89c0506DFB3A4A8468BfD70CBEfA1d7efD",
       "transactionHash": "0x444a3b551d3f6e857075d69d54c001423e940d6aef254e907da0ac3c3bac109c"
+    },
+    "1641219926532": {
+      "events": {},
+      "links": {},
+      "address": "0x1047Cdedb07365112a65a68aE00b9Ff139B613a1",
+      "transactionHash": "0x0ac92e8e43b653e2a47d19cb51bb288201ae4780a5ec58ad1d077e12fca36879"
+    },
+    "1641223025205": {
+      "events": {},
+      "links": {},
+      "address": "0xd4aD1E225117d2F2a66237CA7b452fee8A6f1fea",
+      "transactionHash": "0x274afcc04245eb37403c1f96f2bf85715ef983df1b3fa743aba3e63627584ffb"
+    },
+    "1641258207177": {
+      "events": {},
+      "links": {},
+      "address": "0x12c2c757Ba28EE81D4e72Fe70eE1dF9F17cbc51a",
+      "transactionHash": "0x01e3c9aab337ff15d098a62965b87c14881a57314c78f6981a9868595bfd51c6"
+    },
+    "1641361119264": {
+      "events": {},
+      "links": {},
+      "address": "0x446546e194E3921c6927C2a7a30C1Ebe8B9aC727",
+      "transactionHash": "0x66e538a90ad52cbe113298476d132d05d78004bcd11f963a81f6e6ec27e39fa9"
+    },
+    "1642061505331": {
+      "events": {},
+      "links": {},
+      "address": "0x8CeDC7b8ea794c582C0F0D34fe69E387154fc97F",
+      "transactionHash": "0x0e541162596e7abf4475885e4adef23fd847b1aec9b944bfe3c1fe1531dfa8b5"
+    },
+    "1642068745138": {
+      "events": {},
+      "links": {},
+      "address": "0x45E10Cf892289929Ed7C85292431525691cc6A55",
+      "transactionHash": "0x169fb3c47becdd099593b25d8c39a7d361b8465d145c41bd4e3bf0c57e0010bf"
     }
   },
   "schemaVersion": "3.4.4",
-  "updatedAt": "2022-01-02T07:33:50.275Z",
+  "updatedAt": "2022-01-13T10:12:54.603Z",
+  "networkType": "ethereum",
   "devdoc": {
     "methods": {}
   },
