@@ -33,11 +33,60 @@ App = {
         $.getJSON("Election.json", function (election) {
             App.contracts.Election = TruffleContract(election);
             App.contracts.Election.setProvider(App.web3Provider);
+            App.listenForEvents();
+            App.listenForAccountSwitch();
             return App.render();
         });
 
+        // var Contract = require('web3-eth-contract');
+
+        // // set provider for all later instances to use
+        // Contract.setProvider('http://localhost:8546');
+
+        // var contract = new Contract(jsonInterface, address);
+
+        //return App.listenForEvents();
+        
+
         //return App.bindEvents();
     },
+
+    listenForAccountSwitch: function() {
+        window.ethereum.on('accountsChanged', handleAccountsChanged);
+        function handleAccountsChanged(accounts) { 
+            currentAccount = accounts[0];
+            window.location.reload();
+        }
+    },
+
+    //Listen for events emitted from the contract
+    listenForEvents: function () {
+        App.contracts.Election.deployed().then(function (instance) {
+            // Restart Chrome if you are unable to receive this event
+            // This is a known issue with Metamask
+            // https://github.com/MetaMask/metamask-extension/issues/2393
+            instance.votedEvent({}, {
+                fromBlock: 0,
+                toBlock: 'latest'
+            }).watch(function (error, event) {
+                console.log("event triggered", event)
+                // Reload when a new vote is recorded
+                App.render();
+            });
+        });
+    },
+
+    // // listen for events emitted from the contract
+    
+    // listenForEvents:    
+    //     contract.events.votedEvent({},{
+    //         fromBlock: 0,
+    //         toBlock: 'latest'
+    //     }).on(function (error,event) {
+    //         console.log("event triggered", event)
+    //         // reload when a new vote is recorded
+    //         App.render();
+    //         }),
 
     render: function() {
         var electionInstance;
@@ -56,36 +105,83 @@ App = {
         });
 
         // Load contract data
-        App.contracts.Election.deployed().then(function(instance) {
+        // App.contracts.Election.deployed().then(function(instance) {
+        //     electionInstance = instance;
+        //     return electionInstance.candidatesCount();
+        // }).then(function(candidatesCount) {
+        //     var candidatesResults = $("#candidatesResults");
+        //     candidatesResults.empty();
+
+        //     var candidatesSelect = $("#candidatesSelect");
+        //     candidatesSelect.empty();
+
+        //     for (var i=1; i<=candidatesCount; i++) {
+        //         electionInstance.candidates(i).then(function(candidate) {
+        //             var id = candidate[0];
+        //             var name = candidate[1];
+        //             var voteCount = candidate[2];
+
+        //             //Render candidate Result
+        //             var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + voteCount + "</td></tr>"
+        //             candidatesResults.append(candidateTemplate);
+
+        //             //Render candidate ballot options
+        //             var candidateOption = "<option value='"+id+"'>"+name+"</ option>"
+        //             candidatesSelect.append(candidateOption);
+        //         });
+        //     }
+        //     return electionInstance.voters(App.account);
+        // })
+        App.contracts.Election.deployed().then(function (instance) {
             electionInstance = instance;
             return electionInstance.candidatesCount();
-        }).then(function(candidatesCount) {
-            var candidatesResults = $("#candidatesResults");
-            candidatesResults.empty();
+        }).then(function (candidatesCount) {
+            const promises = [];
+            // Store all prosed to get candidate info
+            for (var i = 1; i <= candidatesCount; i++) {
+                promises.push(electionInstance.candidates(i));
+            }
 
-            var candidatesSelect = $("#candidatesSelect");
-            candidatesSelect.empty();
+            // Once all candidates are received, add to dom
+            Promise.all(promises).then(candidates => {
+                var candidatesResults = $("#candidatesResults");
+                candidatesResults.empty();
 
-            for (var i=1; i<=candidatesCount; i++) {
-                electionInstance.candidates(i).then(function(candidate) {
+                var candidatesSelect = $("#candidatesSelect");
+                candidatesSelect.empty();
+
+                candidates.forEach(candidate => {
                     var id = candidate[0];
                     var name = candidate[1];
                     var voteCount = candidate[2];
 
-                    //Render candidate Result
-                    var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + voteCount + "</td></tr>"
+                    // Render candidate Result
+                    var candidateTemplate =
+                        "<tr><th>" +
+                        id +
+                        "</th><td>" +
+                        name +
+                        "</td><td>" +
+                        voteCount +
+                        "</td></tr>";
                     candidatesResults.append(candidateTemplate);
 
-                    //Render candidate ballot options
-                    var candidateOption = "<option value='"+id+"'>"+name+"</ option>"
+                    // Render candidate ballot option
+                    var candidateOption =
+                        "<option value='" + id + "' >" + name + "</ option>";
                     candidatesSelect.append(candidateOption);
                 });
-            }
+            });
+
             return electionInstance.voters(App.account);
         }).then(function(hasVoted) {
             // do not allow a user to vote
             if(hasVoted) {
-                $('#form').hide();
+                $('form').hide();
+                $('#vote-msg').html(`
+                <div class="alert alert-danger text-center" role="alert">
+                <span>You have already voted!</span>
+                </div>`)
             }
             loader.hide();
             content.show();

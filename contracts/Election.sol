@@ -31,6 +31,11 @@ contract Election {
         addCandidate("SAITAMA");
     }
 
+    // voted event
+    event votedEvent (
+        uint indexed _candidateId
+    );
+
     function vote(uint _candidateId) public {
         // the statements below require(condition) will get executed only if the condition is 'true'
         
@@ -49,5 +54,8 @@ contract Election {
 
         // update candidate  vote count
         candidates[_candidateId].voteCount++;
+
+        // trigger voted Event
+        emit votedEvent(_candidateId);
     }
 }

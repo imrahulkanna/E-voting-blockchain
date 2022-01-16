@@ -18,7 +18,7 @@
     <![endif]-->
   </head>
   <body>
-    <div class="container" style="width: 650px;">
+    <div class="container" style="width: 650px;margin-top: 50px;">
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="text-center">Election Results</h1>
@@ -46,16 +46,22 @@
                             <select class="form-control" id="candidatesSelect">
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary">Vote</button>
+                        <button type="submit" class="btn btn-primary" >Vote</button>
                         <hr />
                     </form>
                     <p id="accountAddress" class="text-center"></p>
                 </div>
+                <div id="vote-msg" style="margin-top: 20px;"></div>
             </div>
         </div>
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script>
+        function refreshPage() {
+            window.location.reload();
+        } 
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
