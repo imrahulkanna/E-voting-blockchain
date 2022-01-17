@@ -40,10 +40,10 @@ contract Election {
         // the statements below require(condition) will get executed only if the condition is 'true'
         
         //require that they haven't voted before 
-        require(!voters[msg.sender]); // voters[msg.sender] returns false(since the voter hasnt voted) so to make it true we use'!'
+        require(!voters[msg.sender], "Already voted"); // voters[msg.sender] returns false(since the voter hasnt voted) so to make it true we use'!'
 
         // require a valid candidate
-        require(_candidateId > 0 && _candidateId <= candidatesCount); // checks whether the candidate is within the candidateId list
+        require(_candidateId > 0 && _candidateId <= candidatesCount, "Invalid candidate"); // checks whether the candidate is within the candidateId list
 
     // To access the accounts in truffle test use
     // web3.eth.getAccounts().then(function(acc) {acounts=acc;})
