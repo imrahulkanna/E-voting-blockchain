@@ -55,7 +55,14 @@ App = {
         window.ethereum.on('accountsChanged', handleAccountsChanged);
         function handleAccountsChanged(accounts) { 
             currentAccount = accounts[0];
-            window.location.reload();
+            // window.location.onload() = function() {
+            //     $('form').hide();
+            //     $('#vote-msg').html(`
+            //     <div class="alert alert-danger text-center" role="alert">
+            //     <span>DO NOT SWITCH THE ACCOUNT</span>
+            //     </div>`)
+            // }
+            window.location.reload(); 
         }
     },
 
